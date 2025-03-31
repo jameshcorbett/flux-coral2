@@ -1,17 +1,18 @@
 FROM fluxrm/flux-sched:el9
 
+LABEL maintainer="James Corbett <corbett8@llnl.gov>"
+
 ARG USER=fluxuser
 ARG UID=1000
+ARG GID=1000
 
-RUN \
- if test "$USER" != "fluxuser"; then  \
-      sudo groupadd -g $UID $USER \
-   && sudo useradd -g $USER -u $UID -d /home/$USER -m $USER \
-   && sudo sh -c "printf \"$USER ALL= NOPASSWD: ALL\\n\" >> /etc/sudoers" \
-   && sudo usermod -G wheel $USER; \
- fi
+# copy scripts into image
+COPY scripts/ /scripts
+RUN /scripts/install-deps.sh
 
-RUN sudo pip3 install kubernetes
+# Add configured user to image with sudo access:
+#
+RUN /scripts/add_docker_user.sh
 
 COPY ./kubectl.sh ./sync-kube-config.sh /usr/local/share/
 RUN sudo chmod 755 /usr/local/share/kubectl.sh \
