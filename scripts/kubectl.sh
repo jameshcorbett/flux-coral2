@@ -28,7 +28,10 @@ if [ "${KUBECTL_VERSION::1}" != 'v' ]; then
     KUBECTL_VERSION="v${KUBECTL_VERSION}"
 fi
 curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCHITECTURE}/kubectl"
-set -x
 chmod 0755 /usr/local/bin/kubectl
 KUBECTL_SHA256="$(curl -sSL "https://dl.k8s.io/${KUBECTL_VERSION}/bin/linux/${ARCHITECTURE}/kubectl.sha256")"
 (echo "${KUBECTL_SHA256} */usr/local/bin/kubectl" | sha256sum -c -)
+if ! type kubectl > /dev/null 2>&1; then
+    echo '(!) kubectl installation failed!'
+    exit 1
+fi

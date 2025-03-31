@@ -8,13 +8,13 @@ ARG GID=1000
 
 # copy scripts into image
 COPY scripts/ /scripts
-RUN /scripts/install-deps.sh
+RUN sudo /scripts/install-deps.sh -y
 
 # Add configured user to image with sudo access:
 #
-RUN /scripts/add_docker_user.sh
+RUN sudo /scripts/add_docker_user.sh
 
-COPY ./kubectl.sh ./sync-kube-config.sh /usr/local/share/
+COPY /scripts/kubectl.sh /scripts/sync-kube-config.sh /usr/local/share/
 RUN sudo chmod 755 /usr/local/share/kubectl.sh \
   && sudo chmod 755 /usr/local/share/sync-kube-config.sh \
   && sudo /usr/local/share/kubectl.sh \
